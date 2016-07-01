@@ -43,6 +43,28 @@ void createQmlObject(const QString &qml, QQmlContext *parentContext, QObject *pa
 
 auto main(int argc, char** argv) -> int
 {
+    QString code = R"(
+    import QtQuick 2.5
+
+    Rectangle {
+    width: 200
+    height: 200
+    color: "blue"
+
+    objectName: "dynamic"
+
+    MouseArea {
+    anchors.fill: parent
+    onPressed: {
+    }
+    onReleased: {
+    }
+    }
+
+    }
+
+    )";
+
     QGuiApplication app(argc, argv);
 
     QQuickView view;
@@ -52,7 +74,7 @@ auto main(int argc, char** argv) -> int
     auto ctx = view.rootContext();
     auto robj = view.rootObject();
     createQmlObject(
-            "import QtQuick 2.5;Rectangle{id:sample;width:40; height:40;color:\"blue\";}",
+            code,
             ctx,
             robj,
             "file"
