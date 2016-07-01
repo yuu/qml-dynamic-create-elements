@@ -31,6 +31,11 @@ void createQmlObject(const QString &qml, QQmlContext *parentContext, QObject *pa
     QByteArray constructedQml = QString(qml).toLatin1();
 
     component.setData(constructedQml, QUrl::fromLocalFile(filename));
+
+    if(component.isError()) {
+        qDebug() << "Component<error>:" << component.errors();
+    }
+
     QObject *newObject = component.create(parentContext);
     if (newObject)
         reparentQmlObject(newObject, parent);
