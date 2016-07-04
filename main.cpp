@@ -2,6 +2,7 @@
 #include <QQuickView>
 
 #include <QObject>
+#include <QQmlEngine>
 #include <QQmlContext>
 #include <QQmlComponent>
 #include <QQuickItem>
@@ -39,6 +40,9 @@ void createQmlObject(const QString &qml, QQmlContext *parentContext, QObject *pa
     QObject *newObject = component.create(parentContext);
     if (newObject)
         reparentQmlObject(newObject, parent);
+
+    QQmlEngine::setObjectOwnership(newObject, QQmlEngine::JavaScriptOwnership);
+    QObject::connect(qobject_cast<QQuickItem*>(newObject), SIGNAL(push()), newObject, SLOT(selfDestroy()));
 }
 
 auto main(int argc, char** argv) -> int
@@ -47,18 +51,25 @@ auto main(int argc, char** argv) -> int
     import QtQuick 2.5
 
     Rectangle {
+    id: root
     width: 200
     height: 200
     color: "blue"
 
     objectName: "dynamic"
+    signal push
 
     MouseArea {
     anchors.fill: parent
     onPressed: {
     }
     onReleased: {
+        push();
     }
+    }
+
+    function selfDestroy() {
+       root.destroy();
     }
 
     }
